@@ -23,22 +23,12 @@ public class Main {
     private static void playGame() {
         System.out.println("Enter your bet amount: "); // Ask the user for a bet amount
 
-        // Check if the input is an integer
-        while (!scanner.hasNextInt()) {
-            System.out.println("Invalid input. Please enter a valid number.");
-            scanner.next(); // Discard the invalid input
-        }
-        int bet = scanner.nextInt();
-
-        // Check if the bet is a positive number
-        while (bet <= 0) {
-            System.out.println("Invalid input. Please enter a positive number.");
-            bet = scanner.nextInt();
-        }
+        // Check if the input is a positive integer
+        int bet = getPositiveIntegerInput();
 
         // Get prediction for number of attempts
         System.out.println("How many numbers do you think will be needed to win the Bingo?");
-        int predictedAttempts = scanner.nextInt();
+        int predictedAttempts = getPositiveIntegerInput();
 
         scanner.nextLine(); // Clear the scanner buffer after reading integers
 
@@ -46,7 +36,6 @@ public class Main {
         int[] bingoCard = generateBingoCard();
         System.out.println("Your Bingo card is: ");
 
-        // for each - iterates every element in the array (in this case, every number in the bingo card)
         for (int num : bingoCard) {
             System.out.print(num + " ");
         }
@@ -56,20 +45,15 @@ public class Main {
         int attempts = 0;
         int lineHits = 0;
 
-        // Set - collection that contains no duplicate elements
-        // HashSet - constructs a new, empty set
         Set<Integer> numbersCalled = new HashSet<>();
         Set<Integer> matchedNumbers = new HashSet<>();
 
-        // Generate random numbers until all numbers on the card are matched
         while (matchedNumbers.size() < 10) {
             int randomNumber = generateUniqueNumber(numbersCalled); // Generate a unique random number
             attempts++; // Increment the number of attempts
             System.out.printf("Number called: %d\n", randomNumber); // Print the number called
 
-            // for each - iterates every element in the array (in this case, every number in the bingo card)
             for (int num : bingoCard) {
-                // If the number called matches a number on the card, add it to the matched numbers set
                 if (num == randomNumber) {
                     matchedNumbers.add(num);
                     System.out.printf("Matched number: %d\n", num);
@@ -77,25 +61,37 @@ public class Main {
                 }
             }
 
-            // Check for line achievement
             if (matchedNumbers.size() == 5 && lineHits == 0) {
                 lineHits = attempts;
                 System.out.println("Line achieved!");
             }
         }
 
-        // Bingo achieved
         System.out.println("Bingo! All numbers matched!");
 
-        // Show results
         System.out.printf("It took %d numbers to achieve Bingo.\n", attempts);
         System.out.printf("It took %d numbers to achieve Line.\n", lineHits);
 
-        // Check for exact prediction to win the prize
         if (attempts == predictedAttempts) {
             System.out.printf("Congratulations! You guessed the attempts! You won the prize: %d\n", bet * 10);
         } else {
             System.out.printf("Bingo achieved in %d attempts, but your prediction was %d. Better luck next time!\n", attempts, predictedAttempts);
+        }
+    }
+
+    private static int getPositiveIntegerInput() {
+        while (true) {
+            if (!scanner.hasNextInt()) {
+                System.out.println("Invalid input. Please enter a valid integer.");
+                scanner.next(); // Discard the invalid input
+            } else {
+                int input = scanner.nextInt();
+                if (input > 0) {
+                    return input;
+                } else {
+                    System.out.println("Invalid input. Please enter a positive integer.");
+                }
+            }
         }
     }
 
